@@ -95,7 +95,7 @@ vector<MyBank> Bank;
 int main()
 {
     MyBank B;
-
+    int Acc;
     int ch = 0;
     while (ch != 6)
     {
@@ -114,7 +114,7 @@ int main()
         }
 
         case 2:
-            int Acc;
+            // int Acc;
             cout << "\nEnter Account Number: ";
             cin >> Acc;
             for (int i = 0; i < Bank.size(); i++)
@@ -126,7 +126,7 @@ int main()
                 }
             }
         case 3:
-            int Acc;
+            // int Acc;
             cout << "\nEnter Account Number: ";
             cin >> Acc;
             for (int i = 0; i < Bank.size(); i++)
@@ -138,7 +138,7 @@ int main()
                 }
             }
         case 4:
-            int Acc;
+            // int Acc;
             cout << "\nEnter Account Number: ";
             cin >> Acc;
             for (int i = 0; i < Bank.size(); i++)
@@ -150,7 +150,7 @@ int main()
                 }
             }
         case 5:
-            int Acc;
+            // int Acc;
             cout << "\nEnter Account Number: ";
             cin >> Acc;
             for (int i = 0; i < Bank.size(); i++)

@@ -183,6 +183,10 @@ bool is_Pallindrome_Stack(const char *s)
     // Start comparing stack top with the original string
     for (int i = 0; i < len; i++)
     {
+        if(s[i]==" " || s[i]==","){
+            continue;
+        }
+
         if (stack[top] != s[i])
         {
             return false;
@@ -201,6 +205,9 @@ void print_Pallindrome_Stack(const char *s)
     // Push all characters of the string onto the stack
     for (int i = 0; i < len; i++)
     {
+        if(s[i]==" " || s[i]==","){
+            continue;
+        }
         push(s[i]);
     }
     

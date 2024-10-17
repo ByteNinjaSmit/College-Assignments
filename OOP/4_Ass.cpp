@@ -52,13 +52,13 @@ Complex operator-(const Complex &c1, const Complex &c2)
 
 // Multiplication
 Complex Complex::operator*(const Complex &c2)
-{
+{ 
     double real_part = (real * c2.real) - (imaginary * c2.imaginary);
     double imaginary_part = (real * c2.imaginary) + (imaginary * c2.real);
     return Complex(real_part, imaginary_part);
 }
 
-// Division
+// Division 
 Complex Complex::operator/(const Complex &c2)
 {
     double denominator = c2.real * c2.real + c2.imaginary * c2.imaginary;

@@ -26,7 +26,10 @@ public:
     void accept();
     // Function to display the list of books
     void display();
-} ;
+
+    // Function to Search the Record of Book.
+    void search();
+};
 
 // Global head pointer to point to the start of the list
 LMS *head = NULL;
@@ -83,6 +86,38 @@ void LMS::display()
     }
 }
 
+// Search Function Defination
+void LMS::search()
+{
+    if (head == NULL)
+    {
+        cout << "No books available." << endl;
+        return;
+    }
+    else
+    {
+        string search;
+        cout << "Enter the title of the book you want to search: ";
+        cin >> search;
+        int flag;
+        LMS *temp = head;
+        while (temp != NULL) // Traverse through the list
+        {
+            if (temp->title == search)
+            {
+                cout << "\nTitle: " << temp->title << endl;
+                cout << "Author: " << temp->author << endl;
+                cout << "Publisher: " << temp->publisher << endl;
+                cout << "Price: " << temp->price << endl;
+                cout << "--------------------------" << endl;
+                return;
+            }
+            temp = temp->next; // Move to the next node
+        }
+        cout<<"Not Found."<<endl;
+    }
+}
+
 int main()
 {
     LMS L; // Create an instance of the LMS class
@@ -93,7 +128,8 @@ int main()
         cout << "\nLibrary Management System\n";
         cout << "1. Add Book\n";
         cout << "2. Display Books\n";
-        cout << "3. Exit\n";
+        cout << "3. Search Book\n";
+        cout << "4. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -106,12 +142,15 @@ int main()
             L.display(); // Display all books
             break;
         case 3:
+            L.search();
+            break;
+        case 4:
             cout << "Exiting..." << endl;
             break;
         default:
             cout << "Invalid choice! Please try again." << endl;
         }
-    } while (choice != 3);
+    } while (choice != 4);
 
     return 0;
 }

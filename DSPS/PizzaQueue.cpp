@@ -77,6 +77,11 @@ void Pizza::acceptOrder()
     cout << "Enter Quantity: ";
     cin >> quantity;
 
+    if (quantity < 0)
+    {
+        throw runtime_error("Enter Greater than 0. "); 
+    }
+    
     // First order gets a discount
     if (f == -1 && r == -1)
     {
@@ -211,24 +216,32 @@ int main()
         switch (choice)
         {
         case 1:
-            if (f == -1 && r == -1)
+            try
             {
-                P[0].acceptOrder();
-            }
-            else
-            {
-                cout << "You Have To Wait: " << getTime() << " Mins." << endl;
-                cout << "You are customer number " << getQueueCount() + 1 << " in the queue." << endl;
-                cout << "Do You want to Still the Order ? (Yes/No) : ";
-                cin >> temp1;
-                if (temp1 == 1)
+
+                if (f == -1 && r == -1)
                 {
                     P[0].acceptOrder();
                 }
                 else
                 {
-                    cout << "Order Cancelled" << endl;
+                    cout << "You Have To Wait: " << getTime() << " Mins." << endl;
+                    cout << "You are customer number " << getQueueCount() + 1 << " in the queue." << endl;
+                    cout << "Do You want to Still the Order ? (Yes/No) : ";
+                    cin >> temp1;
+                    if (temp1 == 1)
+                    {
+                        P[0].acceptOrder();
+                    }
+                    else
+                    {
+                        cout << "Order Cancelled" << endl;
+                    }
                 }
+            }
+            catch (runtime_error &e)
+            {
+               cout << e.what() << endl;
             }
             break;
         case 2:

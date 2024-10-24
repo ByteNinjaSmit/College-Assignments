@@ -23,61 +23,65 @@ class LMS
 
 public:
     // Function to accept details of a book and add to the linked list
-    void accept()
-    {
-        LMS *nnode = new LMS; // Create a new node
-
-        cout << "Enter title: ";
-        cin >> nnode->title;
-        cout << "Enter author: ";
-        cin >> nnode->author;
-        cout << "Enter publisher: ";
-        cin >> nnode->publisher;
-        cout << "Enter price: ";
-        cin >> nnode->price;
-        nnode->next = NULL; // Set next pointer of the new node to NULL
-
-        // Check if the list is empty, if so, set the new node as the head
-        if (head == NULL)
-        {
-            head = nnode;
-        }
-        else
-        {
-            // Traverse to the end of the list and add the new node
-            LMS *temp = head;
-            while (temp->next != NULL)
-            {
-                temp = temp->next;
-            }
-            temp->next = nnode; // Add new node at the end of the list
-        }
-    }
-
+    void accept();
     // Function to display the list of books
-    void display()
-    {
-        if (head == NULL)
-        {
-            cout << "No books available." << endl;
-            return;
-        }
-
-        LMS *temp = head;
-        while (temp != NULL) // Traverse through the list
-        {
-            cout << "Title: " << temp->title << endl;
-            cout << "Author: " << temp->author << endl;
-            cout << "Publisher: " << temp->publisher << endl;
-            cout << "Price: " << temp->price << endl;
-            cout << "--------------------------" << endl;
-            temp = temp->next; // Move to the next node
-        }
-    }
-};
+    void display();
+} ;
 
 // Global head pointer to point to the start of the list
 LMS *head = NULL;
+
+// Accept Function Defination
+void LMS::accept()
+{
+    LMS *nnode = new LMS; // Create a new node
+
+    cout << "Enter title: ";
+    cin >> nnode->title;
+    cout << "Enter author: ";
+    cin >> nnode->author;
+    cout << "Enter publisher: ";
+    cin >> nnode->publisher;
+    cout << "Enter price: ";
+    cin >> nnode->price;
+    nnode->next = NULL; // Set next pointer of the new node to NULL
+
+    // Check if the list is empty, if so, set the new node as the head
+    if (head == NULL)
+    {
+        head = nnode;
+    }
+    else
+    {
+        // Traverse to the end of the list and add the new node
+        LMS *temp = head;
+        while (temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+        temp->next = nnode; // Add new node at the end of the list
+    }
+}
+// Display Function Defination
+void LMS::display()
+{
+    if (head == NULL)
+    {
+        cout << "No books available." << endl;
+        return;
+    }
+
+    LMS *temp = head;
+    while (temp != NULL) // Traverse through the list
+    {
+        cout << "\nTitle: " << temp->title << endl;
+        cout << "Author: " << temp->author << endl;
+        cout << "Publisher: " << temp->publisher << endl;
+        cout << "Price: " << temp->price << endl;
+        cout << "--------------------------" << endl;
+        temp = temp->next; // Move to the next node
+    }
+}
 
 int main()
 {

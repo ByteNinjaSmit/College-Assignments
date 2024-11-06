@@ -29,6 +29,11 @@ public:
 
     // Function to Search the Record of Book.
     void search();
+
+    // Function to Delete the Record of Book.
+    void deleteRecord();
+    void firstDelete();
+    void lastDelete();
 };
 
 // Global head pointer to point to the start of the list
@@ -105,16 +110,108 @@ void LMS::search()
         {
             if (temp->title == search)
             {
-                cout << "\nTitle: " << temp->title << endl;
-                cout << "Author: " << temp->author << endl;
-                cout << "Publisher: " << temp->publisher << endl;
-                cout << "Price: " << temp->price << endl;
-                cout << "--------------------------" << endl;
-                return;
+                flag = 1;
+                break;
             }
             temp = temp->next; // Move to the next node
         }
-        cout<<"Not Found."<<endl;
+
+        if (flag != 0)
+        {
+            cout << "\nTitle: " << temp->title << endl;
+            cout << "Author: " << temp->author << endl;
+            cout << "Publisher: " << temp->publisher << endl;
+            cout << "Price: " << temp->price << endl;
+            cout << "--------------------------" << endl;
+        }
+        else
+        {
+            cout << "\nBook not found." << endl;
+        }
+    }
+}
+// Deletion At Position Function Defination
+void LMS::deleteRecord()
+{
+    if (head == NULL)
+    {
+        cout << "No books available." << endl;
+        return;
+    }
+
+    string search;
+    cout << "Enter the title of the book you want to delete: ";
+    cin >> search;
+
+    LMS *temp = head;
+    LMS *prev = NULL;
+    bool found = false;
+
+    // Traverse the list to find the book
+    while (temp != NULL)
+    {
+        if (temp->title == search) // Assuming `title` is the attribute holding the book's title
+        {
+            found = true;
+            // If the book to delete is the head
+            if (temp == head)
+            {
+                head = head->next;
+            }
+            else
+            {
+                prev->next = temp->next;
+            }
+
+            delete temp;
+            cout << "Book deleted successfully." << endl;
+            return;
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+    if (!found)
+    {
+        cout << "Book not found." << endl;
+    }
+}
+
+// Deleting First Function Defination
+void LMS::firstDelete()
+{
+    if (head == NULL)
+    {
+        cout << "No books available." << endl;
+        return;
+    }
+    else
+    {
+        LMS *temp = head;
+        head = temp->next;
+        delete head;
+        cout << "Book deleted successfully." << endl;
+        return;
+    }
+}
+
+void LMS::lastDelete()
+{
+    if (head == NULL)
+    {
+        cout << "No books available." << endl;
+        return;
+    }
+    else
+    {
+        LMS *temp = head;
+        while (temp->next->next != NULL)
+        {
+            temp = temp->next;
+        }
+        delete temp->next;
+        temp->next = NULL;
+        cout << "Book deleted successfully." << endl;
+        return;
     }
 }
 

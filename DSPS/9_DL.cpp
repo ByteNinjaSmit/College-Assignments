@@ -1,4 +1,13 @@
-/* a charity management system need to manage the ijnformation about donors , donation and other releavant information sytem need to mainttain information about  each donor system shuold able to add new donor remove the donor , update the information of the donor search the specific donor also it should display all the information of all the donor present in the database . use the concept of linklist to implement above system */
+/*
+
+a charity management system need to manage the ijnformation about donors , 
+donation and other releavant information sytem need to mainttain information about  
+each donor system shuold able to add new donor remove the donor , 
+update the information of the donor search the specific donor also it should display all the 
+information of all the donor present in the database . 
+use the concept of linklist to implement above system 
+
+*/
 
 #include <iostream>
 #include <string>
@@ -22,8 +31,9 @@ public:
     static void updateDonor(int id);
     static void searchDonor(int id);
     static void displayAll();
+    static void count();
 
-    //friend class DonorList;
+    // friend class DonorList;
 };
 
 Donor *head = NULL;
@@ -174,6 +184,20 @@ void Donor::displayAll()
     }
 }
 
+// Display The No Of Records Of Donors
+void Donor::count()
+{
+    int count = 0;
+    Donor *temp = head;
+    // count The Records
+    while (temp != NULL)
+    {
+        count++;
+        temp=temp->next;
+    }
+    cout << "Total number of donors: " << count << endl;
+}
+
 int main()
 {
     int choice, id;
@@ -185,7 +209,8 @@ int main()
         cout << "3. Update Donor\n";
         cout << "4. Search Donor\n";
         cout << "5. Display All Donors\n";
-        cout << "6. Exit\n";
+        cout << "6. Count The Records\n";
+        cout << "7. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -213,12 +238,15 @@ int main()
             Donor::displayAll();
             break;
         case 6:
+            Donor::count();
+            break;
+        case 7:
             cout << "Exiting...\n";
             break;
         default:
             cout << "Invalid choice, please try again.\n";
         }
-    } while (choice != 6);
+    } while (choice != 7);
 
     return 0;
 }

@@ -23,6 +23,7 @@ public:
     void display();
     void search();
     void modify();
+    void deleteStudent();
 } h[20]; // increased to 20 for more capacity
 
 void studentRecords::Table()
@@ -158,6 +159,38 @@ void studentRecords::modify()
     } while (ch != 0);
 }
 
+// Delete Student Record Logic
+void studentRecords::deleteStudent()
+{
+    int id, ch;
+    bool found;
+    do
+    {
+        found = false;
+        cout << "\nEnter student ID to delete: ";
+        cin >> id;
+        for (int i = 0; i < 10; i++)
+        {
+            if (h[i].ID == id)
+            {
+                found = true;
+                cout << "Record found at location " << i << ": ID = " << h[i].ID << ", Name = " << h[i].Name << endl;
+                h[i].ID = -1;        // Mark ID as deleted
+                h[i].Name = "";      // Clear name
+                cout << "Record deleted successfully!" << endl;
+                break;
+            }
+        }
+        if (!found)
+        {
+            cout << "Record not found!" << endl;
+        }
+
+        cout << "\nDo you want to delete another record? (Yes - 1 / No - 0): ";
+        cin >> ch;
+    } while (ch != 0);
+}
+
 int main()
 {
     int choice;
@@ -165,7 +198,7 @@ int main()
     cout << "\n\tStudent Record System\n";
     do
     {
-        cout << "\n1. Create Student Records\n2. Display Student Records\n3. Search Student Records\n4. Modify Student Records\n0. Exit\nEnter your choice: ";
+        cout << "\n1. Create Student Records\n2. Display Student Records\n3. Search Student Records\n4. Modify Student Records\n5. Delete Student Record\n0. Exit\nEnter your choice: ";
         cin >> choice;
         switch (choice)
         {
@@ -182,6 +215,10 @@ int main()
         case 4:
             m.modify();
             break;
+        case 5:{
+            m.deleteStudent();
+            break;
+        }
         case 0:
             cout << "Exiting the program." << endl;
             break;

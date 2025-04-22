@@ -1,11 +1,16 @@
 /*
 Assignment 7
-A student record system is software application used to manage student records including student info.10th,12th
+A student record system is software application used to manage student records including student info, 10th, 12th
 result. Hash table can be used  as a data structure to efficiently store or retrieve student records
+
+algo: linear probing with chain hashing
 */
+
 #include <iostream>
 using namespace std;
+
 int key[20], n;
+int chain[20]; // for chain hashing
 
 class studentRecords
 {
@@ -18,48 +23,62 @@ public:
     void display();
     void search();
     void modify();
-} h[50];
+} h[20]; // increased to 20 for more capacity
 
 void studentRecords::Table()
 {
+    // Initialize chain and hash table
+    for (int i = 0; i < 20; i++)
+    {
+        chain[i] = -1;
+        h[i].ID = -1;
+    }
+
     cout << "Enter No. of records you want to store: ";
     cin >> n;
+
     for (int i = 0; i < n; i++)
     {
-        cout << "Enter ID " << i << " : ";
+        cout << "Enter ID " << i + 1 << ": ";
         cin >> key[i];
-    }
-    for (int i = 0; i < 10; i++)
-    {
-        h[i].ID = -1;
     }
 }
 
 void studentRecords::accept()
 {
-    int loc;
     for (int i = 0; i < n; i++)
     {
-        loc = key[i] % 10;
+        int id = key[i];
+        int loc = id % 10; // hash function
+        int orig_loc = loc;
+
         if (h[loc].ID == -1)
         {
-            cout << "Enter Name for ID " << key[i] << " : ";
+            cout << "Enter Name for ID " << id << ": ";
             cin >> h[loc].Name;
-            h[loc].ID = key[i];
-            cout << "Record Added at location " << loc << "." << endl;
+            h[loc].ID = id;
+            cout << "Record added at location " << loc << "." << endl;
         }
         else
         {
-            cout << "\nCollision Occured at location " << loc << "!!!" << endl;
-            loc = (loc + 1) % 10;
-            while (h[loc].ID != -1)
+            cout << "\nCollision occurred at location " << loc << " for ID " << id << "!!!" << endl;
+            int prev = loc;
+
+            // Linear probing
+            do
             {
-                loc = (loc + 1) % 10;
-            }
-            cout << "Enter Name for ID " << key[i] << " : ";
+                loc = (loc + 1) % 20;
+            } while (h[loc].ID != -1);
+
+            cout << "Enter Name for ID " << id << ": ";
             cin >> h[loc].Name;
-            h[loc].ID = key[i];
-            cout << "Record Added at location " << loc << "." << endl;
+            h[loc].ID = id;
+            cout << "Record added at location " << loc << "." << endl;
+
+            // Add chain link
+            while (chain[prev] != -1)
+                prev = chain[prev];
+            chain[prev] = loc;
         }
     }
 }
@@ -67,34 +86,39 @@ void studentRecords::accept()
 void studentRecords::display()
 {
     cout << "\nStudent Records: \n";
-    cout << "Location\tID\tName" << endl;
-    for (int i = 0; i < 10; i++)
+    cout << "Loc\tID\tName\tChain" << endl;
+    for (int i = 0; i < 20; i++)
     {
-        cout << i << "\t\t" << h[i].ID << "\t" << h[i].Name << endl;
+        cout << i << "\t" << h[i].ID << "\t" << h[i].Name << "\t" << chain[i] << endl;
     }
 }
 
 void studentRecords::search()
 {
     int id, ch;
-    bool isFound = false;
+    bool found;
     do
     {
-        cout << "\nEnter patient ID to search: ";
+        found = false;
+        cout << "\nEnter student ID to search: ";
         cin >> id;
-        for (int i = 0; i < 10; i++)
+        int loc = id % 10;
+
+        // Search in chain
+        while (loc != -1)
         {
-            if (h[i].ID == id)
+            if (h[loc].ID == id)
             {
-                isFound = true;
-                cout << "\nRecord found at location " << i << ": ID = " << h[i].ID << ", Name = " << h[i].Name << endl;
+                cout << "Record found at location " << loc << ": ID = " << h[loc].ID << ", Name = " << h[loc].Name << endl;
+                found = true;
                 break;
             }
+            loc = chain[loc];
         }
-        if (!isFound)
-        {
+
+        if (!found)
             cout << "Record not found!" << endl;
-        }
+
         cout << "\nDo you want to search another record? (Yes-1/No-0): ";
         cin >> ch;
     } while (ch != 0);
@@ -103,29 +127,33 @@ void studentRecords::search()
 void studentRecords::modify()
 {
     int id, ch;
-    bool isFound = false;
+    bool found;
     do
     {
+        found = false;
         cout << "\nEnter student ID to modify: ";
         cin >> id;
-        for (int i = 0; i < 10; i++)
+        int loc = id % 10;
+
+        // Traverse the chain
+        while (loc != -1)
         {
-            if (h[i].ID == id)
+            if (h[loc].ID == id)
             {
-                isFound = true;
-                cout << "\nRecord found at location " << i << ": ID = " << h[i].ID << ", Name = " << h[i].Name << endl;
-                cout << "\nEnter new Name for ID " << id << ": ";
-                cin >> h[i].Name;
+                cout << "Record found at location " << loc << ": ID = " << h[loc].ID << ", Name = " << h[loc].Name << endl;
+                cout << "Enter new Name: ";
+                cin >> h[loc].Name;
                 cout << "Record modified successfully!" << endl;
+                found = true;
                 break;
             }
-        }
-        if (!isFound)
-        {
-            cout << "Record not found!" << endl;
+            loc = chain[loc];
         }
 
-        cout << "\nDo you want to modify another record? (Yes - 1 / No - 0): ";
+        if (!found)
+            cout << "Record not found!" << endl;
+
+        cout << "\nDo you want to modify another record? (Yes-1/No-0): ";
         cin >> ch;
     } while (ch != 0);
 }
@@ -133,8 +161,8 @@ void studentRecords::modify()
 int main()
 {
     int choice;
-    cout << "\n\tStudent Record System\n";
     studentRecords m;
+    cout << "\n\tStudent Record System\n";
     do
     {
         cout << "\n1. Create Student Records\n2. Display Student Records\n3. Search Student Records\n4. Modify Student Records\n0. Exit\nEnter your choice: ";
@@ -158,7 +186,7 @@ int main()
             cout << "Exiting the program." << endl;
             break;
         default:
-            cout << "Invalid choice! Please try again." << endl;
+            cout << "Invalid choice! Try again." << endl;
         }
         cout << "\nDo you want to continue? (Yes-1/No-0): ";
         cin >> choice;

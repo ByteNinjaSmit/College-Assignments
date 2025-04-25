@@ -44,17 +44,17 @@ void studentRecords::Table()
         cin >> key[i];
     }
 }
-
 void studentRecords::accept()
 {
     for (int i = 0; i < n; i++)
     {
         int id = key[i];
-        int loc = id % 10; // hash function
-        int orig_loc = loc;
+        int loc = id % 10; // hash function base index
+        int newLoc = loc;
 
         if (h[loc].ID == -1)
         {
+            // No collision
             cout << "Enter Name for ID " << id << ": ";
             cin >> h[loc].Name;
             h[loc].ID = id;
@@ -62,27 +62,34 @@ void studentRecords::accept()
         }
         else
         {
+            // Collision occurred
             cout << "\nCollision occurred at location " << loc << " for ID " << id << "!!!" << endl;
-            int prev = loc;
 
-            // Linear probing
+            // Linear probing to find next empty slot
             do
             {
-                loc = (loc + 1) % 20;
-            } while (h[loc].ID != -1);
+                newLoc = (newLoc + 1) % 20;
+            } while (h[newLoc].ID != -1);
 
+            // Add data to new location
             cout << "Enter Name for ID " << id << ": ";
-            cin >> h[loc].Name;
-            h[loc].ID = id;
-            cout << "Record added at location " << loc << "." << endl;
+            cin >> h[newLoc].Name;
+            h[newLoc].ID = id;
+            cout << "Record added at location " << newLoc << "." << endl;
 
-            // Add chain link
-            while (chain[prev] != -1)
-                prev = chain[prev];
-            chain[prev] = loc;
+            // Now find previous record in the chain
+            int temp = loc;
+            while (chain[temp] != -1)
+            {
+                temp = chain[temp];
+            }
+
+            // Link last chain element to the new location
+            chain[temp] = newLoc;
         }
     }
 }
+
 
 void studentRecords::display()
 {

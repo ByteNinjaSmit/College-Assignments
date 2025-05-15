@@ -6,151 +6,112 @@ Hash table can be used as a data structure to efficiently store and retrieve med
 #include <iostream>
 using namespace std;
 
-int key[20], n;
-
-class medicalRecords
-{
+class MedicalRecord {
     int ID;
     string Name;
+
 public:
-    void Table();
-    void accept();
+    void createTable();
+    void insertRecords();
     void display();
     void search();
     void modify();
-} h[50];
+} records[10];
 
-void medicalRecords::Table()
-{
-    cout << "Enter No. of Records you want to store: ";
-    cin >> n;
-    for (int i = 0; i < n; i++)
-    {
-        cout << "Enter ID " << i + 1 << " : ";
-        cin >> key[i];
+int keys[10], total;
+
+void MedicalRecord::createTable() {
+    cout << "Enter number of records to store (max 10): ";
+    cin >> total;
+    for (int i = 0; i < total; i++) {
+        cout << "Enter ID " << i + 1 << ": ";
+        cin >> keys[i];
     }
-    for (int i = 0; i < 10; i++)
-    {
-        h[i].ID = -1; // initializing hash table
+
+    for (int i = 0; i < 10; i++) {
+        records[i].ID = -1; // Initialize hash table
     }
 }
 
-void medicalRecords::accept()
-{
-    int loc;
-    for (int i = 0; i < n; i++)
-    {
-        loc = key[i] % 10;
-        if (h[loc].ID == -1)
-        {
-            h[loc].ID = key[i];
-            cout << "Enter Name for ID " << key[i] << " : ";
-            cin >> h[loc].Name;
-            cout << "Record Added at location " << loc << "." << endl;
+void MedicalRecord::insertRecords() {
+    for (int i = 0; i < total; i++) {
+        int index = keys[i] % 10;
+
+        while (records[index].ID != -1) {
+            index = (index + 1) % 10; // Linear probing
         }
-        else
-        {
-            cout << "Collision Occurred at location " << loc << "!!!" << endl;
-            loc = (loc + 1) % 10;
-            while (h[loc].ID != -1)
-            {
-                loc = (loc + 1) % 10;
-            }
-            h[loc].ID = key[i];
-            cout << "Enter Name for ID " << key[i] << " : ";
-            cin >> h[loc].Name;
-            cout << "Record Added at location " << loc << "." << endl;
-        }
+
+        records[index].ID = keys[i];
+        cout << "Enter Name for ID " << keys[i] << ": ";
+        cin >> records[index].Name;
     }
 }
 
-void medicalRecords::display()
-{
-    cout << "\nMedical Records: \n";
-    cout << "Location\tID\tName" << endl;
-    for (int i = 0; i < 10; i++)
-    {
-        if (h[i].ID != -1)
-            cout << i << "\t\t" << h[i].ID << "\t" << h[i].Name << endl;
+void MedicalRecord::display() {
+    cout << "\n--- Medical Records ---\n";
+    cout << "Index\tID\tName\n";
+    for (int i = 0; i < 10; i++) {
+        if (records[i].ID != -1)
+            cout << i << "\t" << records[i].ID << "\t" << records[i].Name << "\n";
         else
-            cout << i << "\t\t" << "--\t--" << endl;
+            cout << i << "\t--\t--\n";
     }
 }
 
-void medicalRecords::search()
-{
-    int id, loc, count = 0;
-    cout << "Enter ID to Search: ";
+void MedicalRecord::search() {
+    int id, index, count = 0;
+    cout << "Enter ID to search: ";
     cin >> id;
-    loc = id % 10;
+    index = id % 10;
 
-    while (h[loc].ID != id && count < 10)
-    {
-        loc = (loc + 1) % 10;
+    while (records[index].ID != id && count < 10) {
+        index = (index + 1) % 10;
         count++;
     }
 
-    if (h[loc].ID == id)
-        cout << "Record Found at location " << loc << ": Name = " << h[loc].Name << endl;
+    if (records[index].ID == id)
+        cout << "Found at index " << index << ": " << records[index].Name << "\n";
     else
-        cout << "Record Not Found!" << endl;
+        cout << "Record not found.\n";
 }
 
-void medicalRecords::modify()
-{
-    int id, loc, count = 0;
-    cout << "Enter ID to Modify: ";
+void MedicalRecord::modify() {
+    int id, index, count = 0;
+    cout << "Enter ID to modify: ";
     cin >> id;
-    loc = id % 10;
+    index = id % 10;
 
-    while (h[loc].ID != id && count < 10)
-    {
-        loc = (loc + 1) % 10;
+    while (records[index].ID != id && count < 10) {
+        index = (index + 1) % 10;
         count++;
     }
 
-    if (h[loc].ID == id)
-    {
-        cout << "Current Name: " << h[loc].Name << endl;
+    if (records[index].ID == id) {
+        cout << "Current Name: " << records[index].Name << "\n";
         cout << "Enter New Name: ";
-        cin >> h[loc].Name;
-        cout << "Record Updated!" << endl;
-    }
-    else
-    {
-        cout << "Record Not Found!" << endl;
+        cin >> records[index].Name;
+        cout << "Record updated.\n";
+    } else {
+        cout << "Record not found.\n";
     }
 }
 
-int main()
-{
-    medicalRecords m;
-    m.Table();
-    m.accept();
+int main() {
+    MedicalRecord m;
+    m.createTable();
+    m.insertRecords();
     m.display();
 
     int choice;
-    do
-    {
-        cout << "\nMenu:\n1. Search\n2. Modify\n3. Display\n4. Exit\nEnter your choice: ";
+    do {
+        cout << "\nMenu:\n1. Search\n2. Modify\n3. Display\n4. Exit\nEnter choice: ";
         cin >> choice;
-
-        switch (choice)
-        {
-        case 1:
-            m.search();
-            break;
-        case 2:
-            m.modify();
-            break;
-        case 3:
-            m.display();
-            break;
-        case 4:
-            cout << "Exiting...\n";
-            break;
-        default:
-            cout << "Invalid choice!" << endl;
+        switch (choice) {
+            case 1: m.search(); break;
+            case 2: m.modify(); break;
+            case 3: m.display(); break;
+            case 4: cout << "Exiting...\n"; break;
+            default: cout << "Invalid choice.\n";
         }
     } while (choice != 4);
 

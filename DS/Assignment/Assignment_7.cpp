@@ -9,231 +9,133 @@ algo: linear probing with chain hashing
 #include <iostream>
 using namespace std;
 
-int key[20], n;
-int chain[20]; // for chain hashing
-
-class studentRecords
-{
+class MedicalRecord {
     int ID;
     string Name;
 
 public:
-    void Table();
-    void accept();
+    void createTable();
+    void insertRecords();
     void display();
     void search();
     void modify();
-    void deleteStudent();
-} h[20]; // increased to 20 for more capacity
+} records[10];
 
-void studentRecords::Table()
-{
-    // Initialize chain and hash table
-    for (int i = 0; i < 20; i++)
-    {
-        chain[i] = -1;
-        h[i].ID = -1;
+int keys[10], total;
+int chain[10];  // chain array
+
+void MedicalRecord::createTable() {
+    cout << "Enter number of records to store (max 10): ";
+    cin >> total;
+    for (int i = 0; i < total; i++) {
+        cout << "Enter ID " << i + 1 << ": ";
+        cin >> keys[i];
     }
 
-    cout << "Enter No. of records you want to store: ";
-    cin >> n;
-
-    for (int i = 0; i < n; i++)
-    {
-        cout << "Enter ID " << i + 1 << ": ";
-        cin >> key[i];
+    for (int i = 0; i < 10; i++) {
+        records[i].ID = -1;
+        chain[i] = -1;
     }
 }
-void studentRecords::accept()
-{
-    for (int i = 0; i < n; i++)
-    {
-        int id = key[i];
-        int loc = id % 10; // hash function base index
-        int newLoc = loc;
 
-        if (h[loc].ID == -1)
-        {
-            // No collision
+void MedicalRecord::insertRecords() {
+    for (int i = 0; i < total; i++) {
+        int id = keys[i];
+        int index = id % 10;
+        int newIndex = index;
+
+        // No collision
+        if (records[index].ID == -1) {
             cout << "Enter Name for ID " << id << ": ";
-            cin >> h[loc].Name;
-            h[loc].ID = id;
-            cout << "Record added at location " << loc << "." << endl;
-        }
-        else
-        {
-            // Collision occurred
-            cout << "\nCollision occurred at location " << loc << " for ID " << id << "!!!" << endl;
+            cin >> records[index].Name;
+            records[index].ID = id;
+        } else {
+            // Collision: linear probing to find empty slot
+            do {
+                newIndex = (newIndex + 1) % 10;
+            } while (records[newIndex].ID != -1);
 
-            // Linear probing to find next empty slot
-            do
-            {
-                newLoc = (newLoc + 1) % 20;
-            } while (h[newLoc].ID != -1);
-
-            // Add data to new location
+            // Store at new location
             cout << "Enter Name for ID " << id << ": ";
-            cin >> h[newLoc].Name;
-            h[newLoc].ID = id;
-            cout << "Record added at location " << newLoc << "." << endl;
+            cin >> records[newIndex].Name;
+            records[newIndex].ID = id;
 
-            // Now find previous record in the chain
-            int temp = loc;
-            while (chain[temp] != -1)
-            {
+            // Chain from original index
+            int temp = index;
+            while (chain[temp] != -1) {
                 temp = chain[temp];
             }
-
-            // Link last chain element to the new location
-            chain[temp] = newLoc;
+            chain[temp] = newIndex;
         }
     }
 }
 
-
-void studentRecords::display()
-{
-    cout << "\nStudent Records: \n";
-    cout << "Loc\tID\tName\tChain" << endl;
-    for (int i = 0; i < 20; i++)
-    {
-        cout << i << "\t" << h[i].ID << "\t" << h[i].Name << "\t" << chain[i] << endl;
+void MedicalRecord::display() {
+    cout << "\n--- Medical Records ---\n";
+    cout << "Index\tID\tName\tChain\n";
+    for (int i = 0; i < 10; i++) {
+        if (records[i].ID != -1)
+            cout << i << "\t" << records[i].ID << "\t" << records[i].Name << "\t" << chain[i] << "\n";
+        else
+            cout << i << "\t--\t--\t" << chain[i] << "\n";
     }
 }
 
-void studentRecords::search()
-{
-    int id, ch;
-    bool found;
-    do
-    {
-        found = false;
-        cout << "\nEnter student ID to search: ";
-        cin >> id;
-        int loc = id % 10;
+void MedicalRecord::search() {
+    int id;
+    cout << "Enter ID to search: ";
+    cin >> id;
+    int index = id % 10;
 
-        // Search in chain
-        while (loc != -1)
-        {
-            if (h[loc].ID == id)
-            {
-                cout << "Record found at location " << loc << ": ID = " << h[loc].ID << ", Name = " << h[loc].Name << endl;
-                found = true;
-                break;
-            }
-            loc = chain[loc];
+    while (index != -1) {
+        if (records[index].ID == id) {
+            cout << "Found at index " << index << ": " << records[index].Name << "\n";
+            return;
         }
+        index = chain[index];
+    }
 
-        if (!found)
-            cout << "Record not found!" << endl;
-
-        cout << "\nDo you want to search another record? (Yes-1/No-0): ";
-        cin >> ch;
-    } while (ch != 0);
+    cout << "Record not found.\n";
 }
 
-void studentRecords::modify()
-{
-    int id, ch;
-    bool found;
-    do
-    {
-        found = false;
-        cout << "\nEnter student ID to modify: ";
-        cin >> id;
-        int loc = id % 10;
+void MedicalRecord::modify() {
+    int id;
+    cout << "Enter ID to modify: ";
+    cin >> id;
+    int index = id % 10;
 
-        // Traverse the chain
-        while (loc != -1)
-        {
-            if (h[loc].ID == id)
-            {
-                cout << "Record found at location " << loc << ": ID = " << h[loc].ID << ", Name = " << h[loc].Name << endl;
-                cout << "Enter new Name: ";
-                cin >> h[loc].Name;
-                cout << "Record modified successfully!" << endl;
-                found = true;
-                break;
-            }
-            loc = chain[loc];
+    while (index != -1) {
+        if (records[index].ID == id) {
+            cout << "Current Name: " << records[index].Name << "\n";
+            cout << "Enter New Name: ";
+            cin >> records[index].Name;
+            cout << "Record updated.\n";
+            return;
         }
+        index = chain[index];
+    }
 
-        if (!found)
-            cout << "Record not found!" << endl;
-
-        cout << "\nDo you want to modify another record? (Yes-1/No-0): ";
-        cin >> ch;
-    } while (ch != 0);
+    cout << "Record not found.\n";
 }
 
-// Delete Student Record Logic
-void studentRecords::deleteStudent()
-{
-    int id, ch;
-    bool found;
-    do
-    {
-        found = false;
-        cout << "\nEnter student ID to delete: ";
-        cin >> id;
-        for (int i = 0; i < 10; i++)
-        {
-            if (h[i].ID == id)
-            {
-                found = true;
-                cout << "Record found at location " << i << ": ID = " << h[i].ID << ", Name = " << h[i].Name << endl;
-                h[i].ID = -1;        // Mark ID as deleted
-                h[i].Name = "";      // Clear name
-                cout << "Record deleted successfully!" << endl;
-                break;
-            }
-        }
-        if (!found)
-        {
-            cout << "Record not found!" << endl;
-        }
+int main() {
+    MedicalRecord m;
+    m.createTable();
+    m.insertRecords();
+    m.display();
 
-        cout << "\nDo you want to delete another record? (Yes - 1 / No - 0): ";
-        cin >> ch;
-    } while (ch != 0);
-}
-
-int main()
-{
     int choice;
-    studentRecords m;
-    cout << "\n\tStudent Record System\n";
-    do
-    {
-        cout << "\n1. Create Student Records\n2. Display Student Records\n3. Search Student Records\n4. Modify Student Records\n5. Delete Student Record\n0. Exit\nEnter your choice: ";
+    do {
+        cout << "\nMenu:\n1. Search\n2. Modify\n3. Display\n4. Exit\nEnter choice: ";
         cin >> choice;
-        switch (choice)
-        {
-        case 1:
-            m.Table();
-            m.accept();
-            break;
-        case 2:
-            m.display();
-            break;
-        case 3:
-            m.search();
-            break;
-        case 4:
-            m.modify();
-            break;
-        case 5:{
-            m.deleteStudent();
-            break;
+        switch (choice) {
+            case 1: m.search(); break;
+            case 2: m.modify(); break;
+            case 3: m.display(); break;
+            case 4: cout << "Exiting...\n"; break;
+            default: cout << "Invalid choice.\n";
         }
-        case 0:
-            cout << "Exiting the program." << endl;
-            break;
-        default:
-            cout << "Invalid choice! Try again." << endl;
-        }
-        cout << "\nDo you want to continue? (Yes-1/No-0): ";
-        cin >> choice;
-    } while (choice != 0);
+    } while (choice != 4);
+
     return 0;
 }
